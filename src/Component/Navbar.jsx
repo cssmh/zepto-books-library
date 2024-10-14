@@ -8,7 +8,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-white transition-all duration-300 shadow-md">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-white transition-all duration-300 shadow-md px-8">
       <div className="border-b border-gray-300">
         <div className="navbar min-h-[59px] max-w-7xl mx-auto py-0">
           <div className="navbar-start">
