@@ -4,7 +4,7 @@ import SmallLoader from "./SmallLoader";
 
 const HomePage = () => {
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start loading as true
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   const [wishlist, setWishlist] = useState(() => {
@@ -15,17 +15,21 @@ const HomePage = () => {
 
   // Fetch books from the API
   useEffect(() => {
-    setLoading(true);
-    try {
-      axios.get("https://gutendex.com/books").then((res) => {
-        setBooks(res?.data.results);
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    const fetchBooks = async () => {
+      setLoading(true); // Set loading to true before the request
+      try {
+        const response = await axios.get("https://gutendex.com/books");
+        setBooks(response.data.results);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false); // Set loading to false after the request is complete
+      }
+    };
+
+    fetchBooks();
   }, []);
+  console.log(books);
 
   // Add/remove book from wishlist
   const toggleWishlist = (book) => {
@@ -56,6 +60,7 @@ const HomePage = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  // Show loader if loading
   if (loading) return <SmallLoader size={76} />;
 
   return (
@@ -83,34 +88,38 @@ const HomePage = () => {
       </div>
 
       {/* Books List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {currentBooks.map((book) => (
-          <div key={book.id} className="border p-4 rounded-lg shadow-md">
-            <img
-              src={book.formats["image/jpeg"] || "fallback.jpg"}
-              alt={book.title}
-              className="w-full h-40 object-cover mb-4"
-            />
-            <h3 className="font-bold text-lg mb-2">{book.title}</h3>
-            <p className="text-gray-600 mb-2">
-              {book.authors.length > 0
-                ? book.authors[0].name
-                : "Unknown Author"}
-            </p>
-            <p className="text-gray-500 text-sm mb-2">
-              {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
-            </p>
-            <button
-              onClick={() => toggleWishlist(book)}
-              className={`${
-                wishlist.includes(book.id) ? "text-red-500" : "text-gray-500"
-              }`}
-            >
-              {wishlist.includes(book.id) ? "❤️" : "🤍"}
-            </button>
-          </div>
-        ))}
-      </div>
+      {filteredBooks.length === 0 ? (
+        <p>No books found.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {currentBooks.map((book) => (
+            <div key={book.id} className="border p-4 rounded-lg shadow-md">
+              <img
+                src={book.formats["image/jpeg"] || "fallback.jpg"}
+                alt={book.title}
+                className="w-full h-40 object-cover mb-4"
+              />
+              <h3 className="font-bold text-lg mb-2">{book.title}</h3>
+              <p className="text-gray-600 mb-2">
+                {book.authors.length > 0
+                  ? book.authors[0].name
+                  : "Unknown Author"}
+              </p>
+              <p className="text-gray-500 text-sm mb-2">
+                {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
+              </p>
+              <button
+                onClick={() => toggleWishlist(book)}
+                className={`${
+                  wishlist.includes(book.id) ? "text-red-500" : "text-gray-500"
+                }`}
+              >
+                {wishlist.includes(book.id) ? "❤️" : "🤍"}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Pagination */}
       <div className="flex justify-center mt-6">
