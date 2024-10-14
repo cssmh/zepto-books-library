@@ -1,143 +1,135 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import axios from "axios";
 import SmallLoader from "./SmallLoader";
 
-const Home = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+const HomePage = () => {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
+  const [wishlist, setWishlist] = useState(() => {
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
+  });
   const [currentPage, setCurrentPage] = useState(1);
-  const [wishlist, setWishlist] = useState(
-    JSON.parse(localStorage.getItem("wishlist")) || []
-  );
+  const booksPerPage = 10;
 
-  const fetchBooks = async () => {
-    const response = await fetch("https://gutendex.com/books");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+  // Fetch books from the API
+  useEffect(() => {
+    setLoading(true);
+    try {
+      axios.get("https://gutendex.com/books").then((res) => {
+        setBooks(res?.data.results);
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-    return response.json();
+  }, []);
+
+  // Add/remove book from wishlist
+  const toggleWishlist = (book) => {
+    const updatedWishlist = wishlist.includes(book.id)
+      ? wishlist.filter((id) => id !== book.id)
+      : [...wishlist, book.id];
+    setWishlist(updatedWishlist);
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
   };
 
-  const { data = [], isLoading } = useQuery({
-    queryKey: ["books"], // Unique key for the query
-    queryFn: fetchBooks, // Your fetch function
+  // Filter books by title and genre
+  const filteredBooks = books.filter((book) => {
+    const matchesTitle = book.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesGenre =
+      selectedGenre === "" ||
+      book.subjects.some((subject) =>
+        subject.toLowerCase().includes(selectedGenre.toLowerCase())
+      );
+    return matchesTitle && matchesGenre;
   });
 
-  const books = data?.results || [];
-  const totalPages = Math.ceil(data?.count / 32) || 0; // Assuming 32 books per page
-  console.log(books);
+  // Pagination logic
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
 
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }, [wishlist]);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleWishlistToggle = (bookId) => {
-    setWishlist((prevWishlist) => {
-      const updatedWishlist = prevWishlist.includes(bookId)
-        ? prevWishlist.filter((id) => id !== bookId)
-        : [...prevWishlist, bookId];
-      return updatedWishlist;
-    });
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
-  };
-
-  const handleGenreChange = (e) => {
-    setSelectedGenre(e.target.value);
-    setCurrentPage(1); // Reset to the first page when changing genre
-  };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  if (isLoading) return <SmallLoader size={85} />;
+  if (loading) return <SmallLoader size={76} />;
 
   return (
-    <div className="max-w-7xl mx-auto my-6">
-      <div className="search-bar mb-4">
+    <div className="container mx-auto p-4">
+      {/* Search and Filter */}
+      <div className="flex justify-between items-center mb-4">
         <input
           type="text"
+          className="border p-2 rounded w-full max-w-md"
           placeholder="Search by title..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="p-2 border rounded w-full md:w-1/3"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <select
+          className="border p-2 ml-4 rounded"
           value={selectedGenre}
-          onChange={handleGenreChange}
-          className="p-2 border rounded"
+          onChange={(e) => setSelectedGenre(e.target.value)}
         >
           <option value="">All Genres</option>
-          <option value="children">Children</option>
-          <option value="fiction">Fiction</option>
-          <option value="history">History</option>
+          {/* Here you can add more options based on genre */}
+          <option value="science fiction">Science Fiction</option>
+          <option value="horror">Horror</option>
+          <option value="gothic fiction">Gothic Fiction</option>
         </select>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {books?.map((book) => (
-          <div key={book.id} className="book-card border p-4 rounded">
+
+      {/* Books List */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {currentBooks.map((book) => (
+          <div key={book.id} className="border p-4 rounded-lg shadow-md">
             <img
-              src={book.formats["image/jpeg"] || "placeholder-image-url"}
+              src={book.formats["image/jpeg"] || "fallback.jpg"}
               alt={book.title}
-              className="w-full h-48 object-cover mb-2"
+              className="w-full h-40 object-cover mb-4"
             />
-            <h3 className="font-bold">{book.title}</h3>
-            <p>
-              <span className="text-green-500 font-semibold">Author: </span>
-              {book.authors
-                .map(
-                  (author) =>
-                    `${author.name} (${author.birth_year} - ${author.death_year})`
-                )
-                .join(", ")}
+            <h3 className="font-bold text-lg mb-2">{book.title}</h3>
+            <p className="text-gray-600 mb-2">
+              {book.authors.length > 0
+                ? book.authors[0].name
+                : "Unknown Author"}
             </p>
-            <p>
-              <span className="text-green-500 font-semibold">Genres:</span>{" "}
-              {book.bookshelves[0]},{" "}
-              {book.bookshelves[1]}
+            <p className="text-gray-500 text-sm mb-2">
+              {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
             </p>
             <button
-              className="wishlist-btn p-1 border rounded"
-              onClick={() => handleWishlistToggle(book.id)}
+              onClick={() => toggleWishlist(book)}
+              className={`${
+                wishlist.includes(book.id) ? "text-red-500" : "text-gray-500"
+              }`}
             >
-              {wishlist.includes(book.id) ? "❤️" : "🤍"} Wishlist
+              {wishlist.includes(book.id) ? "❤️" : "🤍"}
             </button>
           </div>
         ))}
       </div>
-      <div className="pagination flex justify-center my-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-          className="mx-2 p-1 border rounded"
-        >
-          Previous
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            className={`mx-1 p-1 border rounded ${
-              currentPage === index + 1 ? "bg-blue-500 text-white" : ""
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-          className="mx-2 p-1 border rounded"
-        >
-          Next
-        </button>
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
+        {[...Array(Math.ceil(filteredBooks.length / booksPerPage)).keys()].map(
+          (number) => (
+            <button
+              key={number + 1}
+              onClick={() => paginate(number + 1)}
+              className={`mx-2 px-4 py-2 border ${
+                currentPage === number + 1 ? "bg-blue-500 text-white" : ""
+              }`}
+            >
+              {number + 1}
+            </button>
+          )
+        )}
       </div>
     </div>
   );
 };
 
-export default Home;
+export default HomePage;
