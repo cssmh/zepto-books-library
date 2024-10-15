@@ -27,7 +27,7 @@ const BookDetails = () => {
             className="w-full sm:w-64 h-64 object-cover mb-4 sm:mb-0 sm:mr-6"
           />
           <div>
-            <h1 className="text-3xl font-bold mb-2">{book?.title}</h1>
+            <h1 className="text-3xl font-semibold mb-2">{book?.title}</h1>
             <p className="text-lg mb-2">
               <strong>Author:</strong>{" "}
               {book?.authors?.[0]?.name || "Unknown Author"} (
@@ -98,6 +98,15 @@ const BookDetails = () => {
               </ul>
             </div>
           </div>
+        </div>
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-4">More Information</h2>
+          <p>
+            <strong>Media Type:</strong> {book?.media_type || "N/A"}
+          </p>
+          <p>
+            <strong>Copyright:</strong> {book?.copyright ? "Yes" : "No"}
+          </p>
         </div>
       </div>
     </div>

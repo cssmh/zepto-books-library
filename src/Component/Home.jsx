@@ -1,37 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import SmallLoader from "./SmallLoader";
 import { Link } from "react-router-dom";
 
-const HomePage = () => {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+const Home = () => {
+  const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   const [wishlist, setWishlist] = useState(() => {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 10;
+  const booksPerPage = 9;
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("https://gutendex.com/books");
-        setBooks(response?.data.results);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: books = [], isLoading } = useQuery({
+    queryKey: ["allBooks"],
+    queryFn: async () => {
+      const res = await axios.get("https://gutendex.com/books");
+      return res?.data?.results;
+    },
+  });
 
-    fetchBooks();
-  }, []);
-
-  // Add/remove book from wishlist
-  const toggleWishlist = (book) => {
+  const handleToggleWishlist = (book) => {
     const updatedWishlist = wishlist.includes(book.id)
       ? wishlist.filter((id) => id !== book.id)
       : [...wishlist, book.id];
@@ -43,7 +33,7 @@ const HomePage = () => {
   const filteredBooks = books.filter((book) => {
     const matchesTitle = book.title
       .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+      .includes(search.toLowerCase());
     const matchesGenre =
       selectedGenre === "" ||
       book.bookshelves.some((shelf) =>
@@ -59,7 +49,7 @@ const HomePage = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  if (loading) return <SmallLoader size={83} />;
+  if (isLoading) return <SmallLoader size={83} />;
 
   return (
     <div className="container mx-auto p-4 mb-7">
@@ -68,8 +58,8 @@ const HomePage = () => {
           type="text"
           className="border p-2 rounded w-full max-w-md outline-none"
           placeholder="Search by title..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <select
           className="border p-2 ml-4 rounded outline-none"
@@ -89,7 +79,10 @@ const HomePage = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {currentBooks.map((book) => (
-            <div key={book.id} className="flex flex-col border p-4 rounded-lg shadow-md">
+            <div
+              key={book.id}
+              className="flex flex-col border p-4 rounded-lg shadow-md"
+            >
               <div className="flex-grow">
                 <img
                   src={book.formats["image/jpeg"] || "fallback.jpg"}
@@ -120,7 +113,7 @@ const HomePage = () => {
               </div>
               <div className="flex justify-between">
                 <button
-                  onClick={() => toggleWishlist(book)}
+                  onClick={() => handleToggleWishlist(book)}
                   className={`${
                     wishlist.includes(book.id)
                       ? "text-red-500"
@@ -159,4 +152,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;
