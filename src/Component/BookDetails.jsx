@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import SmallLoader from "./SmallLoader";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import BookHelmet from "./BookHelmet";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const BookDetails = () => {
 
   return (
     <div className="container mx-auto p-4 mb-7">
+      <BookHelmet title={book?.title} />
       <div className="max-w-6xl mx-auto border p-6 rounded-lg shadow-lg">
         <div className="flex flex-col sm:flex-row">
           <img

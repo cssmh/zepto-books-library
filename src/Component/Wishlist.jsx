@@ -1,41 +1,47 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import SmallLoader from "./SmallLoader";
+import { Link } from "react-router-dom";
+import BookHelmet from "./BookHelmet";
 
 const Wishlist = () => {
-  const localStorageSet = JSON.parse(localStorage.getItem("wishlist")) || [];
   const [wishlist, setWishlist] = useState(() => {
-    return localStorageSet;
+    return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get("https://gutendex.com/books");
-        setBooks(response?.data.results);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: books = [], isLoading } = useQuery({
+    queryKey: ["allBooks"],
+    queryFn: async () => {
+      const res = await axios.get("https://gutendex.com/books");
+      return res?.data?.results;
+    },
+  });
 
-    fetchBooks();
-  }, []);
+  const handleRemoveFromWishlist = (bookId) => {
+    try {
+      const updatedWishlist = wishlist.filter((id) => id !== bookId);
+      setWishlist(updatedWishlist);
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+      toast.success("Removed from wishlist!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  if (loading) return <SmallLoader size={82} />;
-  
   const wishListedBooks = books?.filter((book) => wishlist.includes(book.id));
+
+  if (isLoading) return <SmallLoader size={82} />;
 
   return (
     <div className="container mx-auto p-4">
+      <BookHelmet title="Wishlist" />
       <h1 className="text-2xl font-bold mb-4">Your Wishlist</h1>
       {wishListedBooks.length === 0 ? (
         <p>Your wishlist is empty.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {wishListedBooks.map((book) => (
             <div key={book.id} className="border p-4 rounded-lg shadow-md">
               <img
@@ -52,21 +58,20 @@ const Wishlist = () => {
               <p className="text-gray-500 text-sm mb-2">
                 {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
               </p>
-              <button
-                onClick={() => {
-                  const updatedWishlist = wishlist.filter(
-                    (id) => id !== book.id
-                  );
-                  setWishlist(updatedWishlist);
-                  localStorage.setItem(
-                    "wishlist",
-                    JSON.stringify(updatedWishlist)
-                  );
-                }}
-                className="text-red-500"
-              >
-                Remove from Wishlist
-              </button>
+              <div className="flex justify-between">
+                <button
+                  onClick={() => handleRemoveFromWishlist(book.id)}
+                  className="text-red-500"
+                >
+                  Remove from Wishlist
+                </button>
+                <Link
+                  to={`/book-details/${book.id}`}
+                  className="mt-2 inline-block bg-blue-500 text-white py-1 px-4 rounded"
+                >
+                  Details
+                </Link>
+              </div>
             </div>
           ))}
         </div>

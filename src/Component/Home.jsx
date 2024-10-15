@@ -3,13 +3,14 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import SmallLoader from "./SmallLoader";
 import { Link } from "react-router-dom";
+import BookHelmet from "./BookHelmet";
 
 const Home = () => {
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
-  const [wishlist, setWishlist] = useState(() => {
-    return JSON.parse(localStorage.getItem("wishlist")) || [];
-  });
+  const [wishlist, setWishlist] = useState(
+    JSON.parse(localStorage.getItem("wishlist")) || []
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 9;
 
@@ -21,38 +22,34 @@ const Home = () => {
     },
   });
 
-  const handleToggleWishlist = (book) => {
-    const updatedWishlist = wishlist.includes(book.id)
-      ? wishlist.filter((id) => id !== book.id)
-      : [...wishlist, book.id];
+  const handleToggleWishlist = (bookId) => {
+    const updatedWishlist = wishlist.includes(bookId)
+      ? wishlist.filter((id) => id !== bookId)
+      : [...wishlist, bookId];
     setWishlist(updatedWishlist);
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
   };
 
-  // Filter books by title and genre (using bookshelves)
   const filteredBooks = books.filter((book) => {
-    const matchesTitle = book.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesGenre =
-      selectedGenre === "" ||
+    const inTitle = book.title.toLowerCase().includes(search.toLowerCase());
+    const inGenre =
+      !selectedGenre ||
       book.bookshelves.some((shelf) =>
         shelf.toLowerCase().includes(selectedGenre.toLowerCase())
       );
-    return matchesTitle && matchesGenre;
+    return inTitle && inGenre;
   });
 
-  // Pagination logic
-  const indexOfLastBook = currentPage * booksPerPage;
-  const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const currentBooks = filteredBooks.slice(
+    (currentPage - 1) * booksPerPage,
+    currentPage * booksPerPage
+  );
 
   if (isLoading) return <SmallLoader size={83} />;
 
   return (
     <div className="container mx-auto p-4 mb-7">
+      <BookHelmet title="Home" />
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
@@ -74,6 +71,7 @@ const Home = () => {
           <option value="mystery fiction">Mystery Fiction</option>
         </select>
       </div>
+
       {filteredBooks.length === 0 ? (
         <p>No books found.</p>
       ) : (
@@ -113,7 +111,7 @@ const Home = () => {
               </div>
               <div className="flex justify-between">
                 <button
-                  onClick={() => handleToggleWishlist(book)}
+                  onClick={() => handleToggleWishlist(book.id)}
                   className={`${
                     wishlist.includes(book.id)
                       ? "text-red-500"
@@ -134,19 +132,19 @@ const Home = () => {
         </div>
       )}
       <div className="flex justify-center mt-6">
-        {[...Array(Math.ceil(filteredBooks.length / booksPerPage)).keys()].map(
-          (number) => (
-            <button
-              key={number + 1}
-              onClick={() => paginate(number + 1)}
-              className={`mx-2 px-4 py-2 border ${
-                currentPage === number + 1 ? "bg-blue-500 text-white" : ""
-              }`}
-            >
-              {number + 1}
-            </button>
-          )
-        )}
+        {Array.from({
+          length: Math.ceil(filteredBooks.length / booksPerPage),
+        }).map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`mx-2 px-4 py-2 border ${
+              currentPage === index + 1 ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
     </div>
   );

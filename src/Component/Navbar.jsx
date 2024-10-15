@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-// import logo from "../assets/z.png"
+import { FaHeart } from "react-icons/fa";
+
 const Navbar = () => {
   const location = useLocation();
 
@@ -47,6 +48,7 @@ const Navbar = () => {
                     "/wishlist"
                   )}`}
                 >
+                  <FaHeart className="mr-2 text-red-500" />
                   Wishlist
                 </Link>
               </ul>
@@ -71,6 +73,7 @@ const Navbar = () => {
                   "/wishlist"
                 )}`}
               >
+                <FaHeart className="mr-2 text-red-500" />
                 Wishlist
               </Link>
             </ul>
