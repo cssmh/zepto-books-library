@@ -1,22 +1,22 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import SmallLoader from "./SmallLoader";
 
 const Wishlist = () => {
+  const localStorageSet = JSON.parse(localStorage.getItem("wishlist")) || [];
   const [wishlist, setWishlist] = useState(() => {
-    return JSON.parse(localStorage.getItem("wishlist")) || [];
+    return localStorageSet;
   });
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch books from the API
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch("https://gutendex.com/books");
-        const data = await response.json();
-        setBooks(data.results);
+        const response = await axios.get("https://gutendex.com/books");
+        setBooks(response?.data.results);
       } catch (error) {
-        console.error("Error fetching books:", error);
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -25,10 +25,9 @@ const Wishlist = () => {
     fetchBooks();
   }, []);
 
-  // Filter the books to only show wishlisted ones
-  const wishListedBooks = books.filter((book) => wishlist.includes(book.id));
-
-  if (loading) return <SmallLoader size={76} />;
+  if (loading) return <SmallLoader size={82} />;
+  
+  const wishListedBooks = books?.filter((book) => wishlist.includes(book.id));
 
   return (
     <div className="container mx-auto p-4">

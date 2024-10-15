@@ -8,7 +8,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-white transition-all duration-300 shadow-md px-8">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-white transition-all duration-300 shadow-md md:px-8">
       <div className="border-b border-gray-300">
         <div className="navbar min-h-[59px] max-w-7xl mx-auto py-0">
           <div className="navbar-start">
@@ -51,12 +51,9 @@ const Navbar = () => {
                 </Link>
               </ul>
             </div>
-            {/* <Link to="/" className="flex items-center"> */}
-              {/* <img src={logo} className="w-24 md:w-32" alt="Logo" /> */}
-              <Link to="/" className="text-2xl font-bold">
-                Book Library
-              </Link>
-            {/* </Link> */}
+            <Link to="/" className="md:text-2xl font-semibold md:font-bold">
+              Zepto Books
+            </Link>
           </div>
           <div className="navbar-end hidden lg:flex">
             <ul className="menu menu-horizontal px-1">

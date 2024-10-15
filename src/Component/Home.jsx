@@ -4,7 +4,7 @@ import SmallLoader from "./SmallLoader";
 
 const HomePage = () => {
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true); // Start loading as true
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   const [wishlist, setWishlist] = useState(() => {
@@ -13,17 +13,16 @@ const HomePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 10;
 
-  // Fetch books from the API
   useEffect(() => {
     const fetchBooks = async () => {
-      setLoading(true); // Set loading to true before the request
+      setLoading(true);
       try {
         const response = await axios.get("https://gutendex.com/books");
-        setBooks(response.data.results);
+        setBooks(response?.data.results);
       } catch (error) {
         console.error("Error fetching books:", error);
       } finally {
-        setLoading(false); // Set loading to false after the request is complete
+        setLoading(false);
       }
     };
 
@@ -60,12 +59,10 @@ const HomePage = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Show loader if loading
-  if (loading) return <SmallLoader size={76} />;
+  if (loading) return <SmallLoader size={85} />;
 
   return (
-    <div className="container mx-auto p-4">
-      {/* Search and Filter */}
+    <div className="container mx-auto p-4 mb-7">
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
@@ -80,14 +77,11 @@ const HomePage = () => {
           onChange={(e) => setSelectedGenre(e.target.value)}
         >
           <option value="">All Genres</option>
-          {/* Here you can add more options based on genre */}
           <option value="science fiction">Science Fiction</option>
           <option value="horror">Horror</option>
           <option value="gothic fiction">Gothic Fiction</option>
         </select>
       </div>
-
-      {/* Books List */}
       {filteredBooks.length === 0 ? (
         <p>No books found.</p>
       ) : (
@@ -97,16 +91,26 @@ const HomePage = () => {
               <img
                 src={book.formats["image/jpeg"] || "fallback.jpg"}
                 alt={book.title}
-                className="w-full h-40 object-cover mb-4"
+                className="w-full h-40 object-cover mb-2"
               />
-              <h3 className="font-bold text-lg mb-2">{book.title}</h3>
+              <h3 className="font-semibold text-lg">{book.title}</h3>
               <p className="text-gray-600 mb-2">
+                <span className="text-green-600 font-medium">Author: </span>{" "}
                 {book.authors.length > 0
-                  ? book.authors[0].name
+                  ? `${book.authors[0].name} ${
+                      book.authors[0].birth_year
+                        ? `(${book.authors[0].birth_year} - ${
+                            book.authors[0].death_year || "present"
+                          })`
+                        : ""
+                    }`
                   : "Unknown Author"}
               </p>
               <p className="text-gray-500 text-sm mb-2">
                 {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
+              </p>
+              <p className="text-gray-500 text-sm mb-2">
+                <strong>ID:</strong> {book.id}
               </p>
               <button
                 onClick={() => toggleWishlist(book)}
@@ -120,8 +124,6 @@ const HomePage = () => {
           ))}
         </div>
       )}
-
-      {/* Pagination */}
       <div className="flex justify-center mt-6">
         {[...Array(Math.ceil(filteredBooks.length / booksPerPage)).keys()].map(
           (number) => (
