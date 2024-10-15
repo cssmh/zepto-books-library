@@ -49,7 +49,7 @@ const Home = () => {
     return matchesTitle && matchesGenre;
   });
 
-  const totalBooksByBooks = filteredBooks.length;
+  const totalBooksByFilter = filteredBooks.length;
   const currentBooks = filteredBooks.slice(
     (currentPage - 1) * booksPerPage,
     currentPage * booksPerPage
@@ -60,6 +60,7 @@ const Home = () => {
   }, [selectedGenre, books]);
 
   if (isLoading) return <SmallLoader size={83} />;
+  // console.log(totalBooksByFilter);
 
   return (
     <div className="container mx-auto p-4 mb-7">
@@ -90,12 +91,14 @@ const Home = () => {
         </select>
       </div>
 
-      {totalBooksByBooks === 0 ? (
+      {totalBooksByFilter === 0 ? (
         <p>No books found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
-          {currentBooks.map((book) => (
+          {currentBooks.map((book, idx) => (
             <div
+              data-aos="zoom-in-up"
+              data-aos-duration={idx * 420}
               key={book.id}
               className="flex flex-col border p-4 rounded-lg shadow-md"
             >
@@ -151,7 +154,7 @@ const Home = () => {
       )}
       <div className="flex justify-center mt-6">
         {Array.from({
-          length: Math.ceil(totalBooksByBooks / booksPerPage),
+          length: Math.ceil(totalBooksByFilter / booksPerPage),
         }).map((_, index) => (
           <button
             key={index + 1}

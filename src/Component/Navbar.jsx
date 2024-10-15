@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
+import zepto from "../assets/zepto.png";
 
 const Navbar = () => {
   const location = useLocation();
@@ -11,7 +12,7 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 left-0 right-0 z-50 bg-white transition-all duration-300 shadow-md md:px-8">
       <div className="border-b border-gray-300">
-        <div className="navbar min-h-[59px] max-w-7xl mx-auto py-0">
+        <div className="navbar min-h-[57px] max-w-7xl mx-auto py-0">
           <div className="navbar-start">
             <div className="dropdown lg:hidden">
               <label tabIndex={0} className="btn btn-sm btn-ghost">
@@ -54,7 +55,8 @@ const Navbar = () => {
               </ul>
             </div>
             <Link to="/" className="md:text-2xl font-semibold md:font-bold">
-              Zepto Books
+              {/* Zepto Books */}
+              <img src={zepto} className="h-6 md:h-7" alt="" />
             </Link>
           </div>
           <div className="navbar-end hidden lg:flex">

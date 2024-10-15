@@ -1,13 +1,18 @@
-import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "./Shared/MainLayout";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import Home from "./Component/Home";
 import Wishlist from "./Component/Wishlist";
 import BookDetails from "./Component/BookDetails";
+import Navbar from "./Component/Navbar";
 
 const Route = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <>
+        <Navbar />
+        <Outlet />
+      </>
+    ),
     children: [
       { path: "/", element: <Home /> },
       { path: "/wishlist", element: <Wishlist /> },
