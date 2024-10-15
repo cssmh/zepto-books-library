@@ -37,13 +37,18 @@ const Wishlist = () => {
   return (
     <div className="container mx-auto p-4">
       <BookHelmet title="Wishlist" />
-      <h1 className="text-2xl font-bold mb-4">Your Wishlist</h1>
-      {wishListedBooks.length === 0 ? (
+      <h1 className="text-xl md:text-2xl font-semibold mb-4">Your Wishlist</h1>
+      {wishListedBooks?.length === 0 ? (
         <p>Your wishlist is empty.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
-          {wishListedBooks.map((book) => (
-            <div key={book.id} className="border p-4 rounded-lg shadow-md">
+          {wishListedBooks?.map((book) => (
+            <div
+              data-aos="zoom-in"
+              data-aos-duration="600"
+              key={book.id}
+              className="border p-4 rounded-lg shadow-md"
+            >
               <img
                 src={book.formats["image/jpeg"] || "fallback.jpg"}
                 alt={book.title}

@@ -57,7 +57,7 @@ const Home = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedGenre, books]);
+  }, [selectedGenre, books, search]);
 
   if (isLoading) return <SmallLoader size={83} />;
   // console.log(totalBooksByFilter);
@@ -95,18 +95,18 @@ const Home = () => {
         <p>No books found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
-          {currentBooks.map((book, idx) => (
+          {currentBooks?.map((book, idx) => (
             <div
-              data-aos="zoom-in-up"
-              data-aos-duration={idx * 420}
+              data-aos="zoom-in"
+              data-aos-duration={idx * 200}
               key={book.id}
-              className="flex flex-col border p-4 rounded-lg shadow-md"
+              className="flex flex-col border p-3 rounded-lg shadow-md"
             >
               <div className="flex-grow">
                 <img
                   src={book.formats["image/jpeg"] || "fallback.jpg"}
                   alt={book.title}
-                  className="w-full h-40 object-cover mb-2"
+                  className="w-full h-48 object-cover mb-2"
                 />
                 <h3 className="font-semibold text-lg">{book.title}</h3>
                 <p className="text-gray-600 mb-2">

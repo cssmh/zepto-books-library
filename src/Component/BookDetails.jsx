@@ -19,21 +19,21 @@ const BookDetails = () => {
   if (isLoading) return <SmallLoader size={83} />;
 
   return (
-    <div className="container mx-auto p-4 mb-7">
+    <div className="container mx-auto p-2 md:p-4 mb-7">
       <BookHelmet title={book?.title} />
-      <div className="max-w-6xl mx-auto border p-6 rounded-lg shadow-lg">
+      <div className="max-w-6xl mx-auto border p-3 md:p-6 rounded-lg shadow-lg">
         <div className="flex flex-col sm:flex-row">
           <img
             src={book?.formats?.["image/jpeg"] || "fallback.jpg"}
             alt={book?.title}
-            className="w-full sm:w-64 h-64 object-cover mb-4 sm:mb-0 sm:mr-6"
+            className="w-1/2 mx-auto md:w-72 object-cover mb-4 sm:mb-0 sm:mr-6"
           />
           <div>
-            <h1 className="text-3xl font-semibold mb-2">{book?.title}</h1>
-            <p className="text-lg mb-2">
+            <h1 className="text-xl md:text-3xl font-semibold mb-2">{book?.title}</h1>
+            <p className="text-xm md:text-lg mb-2">
               <strong>Author:</strong>{" "}
               {book?.authors?.[0]?.name || "Unknown Author"} (
-              {book?.authors?.[0]?.birth_year || "N/A"} -{" "}
+              {book?.authors?.[0]?.birth_year || ""} - {" "}
               {book?.authors?.[0]?.death_year || "present"})
             </p>
             <p className="text-gray-700 mb-2">

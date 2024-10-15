@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 const BookHelmet = ({ title }) => {
   return (
     <Helmet>
-      <title>{title} | ZeptoBooks</title>
+      <title>{title} | Book Library</title>
     </Helmet>
   );
 };

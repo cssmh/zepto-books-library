@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
-import zepto from "../assets/zepto.png";
 
 const Navbar = () => {
   const location = useLocation();
@@ -54,9 +53,11 @@ const Navbar = () => {
                 </Link>
               </ul>
             </div>
-            <Link to="/" className="md:text-2xl font-semibold md:font-bold">
-              {/* Zepto Books */}
-              <img src={zepto} className="h-6 md:h-7" alt="" />
+            <Link
+              to="/"
+              className="text-xl md:text-2xl text-pink-700 font-semibold md:font-bold font-book"
+            >
+              Book Library
             </Link>
           </div>
           <div className="navbar-end hidden lg:flex">
