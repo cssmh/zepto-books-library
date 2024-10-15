@@ -28,7 +28,6 @@ const HomePage = () => {
 
     fetchBooks();
   }, []);
-  console.log(books);
 
   // Add/remove book from wishlist
   const toggleWishlist = (book) => {
@@ -39,15 +38,15 @@ const HomePage = () => {
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
   };
 
-  // Filter books by title and genre
+  // Filter books by title and genre (using bookshelves)
   const filteredBooks = books.filter((book) => {
     const matchesTitle = book.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     const matchesGenre =
       selectedGenre === "" ||
-      book.subjects.some((subject) =>
-        subject.toLowerCase().includes(selectedGenre.toLowerCase())
+      book.bookshelves.some((shelf) =>
+        shelf.toLowerCase().includes(selectedGenre.toLowerCase())
       );
     return matchesTitle && matchesGenre;
   });
@@ -59,27 +58,29 @@ const HomePage = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  if (loading) return <SmallLoader size={85} />;
+  if (loading) return <SmallLoader size={83} />;
 
   return (
     <div className="container mx-auto p-4 mb-7">
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
-          className="border p-2 rounded w-full max-w-md"
+          className="border p-2 rounded w-full max-w-md outline-none"
           placeholder="Search by title..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <select
-          className="border p-2 ml-4 rounded"
+          className="border p-2 ml-4 rounded outline-none"
           value={selectedGenre}
           onChange={(e) => setSelectedGenre(e.target.value)}
         >
           <option value="">All Genres</option>
-          <option value="science fiction">Science Fiction</option>
-          <option value="horror">Horror</option>
+          <option value="science-fiction">Science Fiction & Fantasy</option>
           <option value="gothic fiction">Gothic Fiction</option>
+          <option value="horror">Horror</option>
+          <option value="movie books">Movie Books</option>
+          <option value="mystery fiction">Mystery Fiction</option>
         </select>
       </div>
       {filteredBooks.length === 0 ? (
@@ -95,7 +96,7 @@ const HomePage = () => {
               />
               <h3 className="font-semibold text-lg">{book.title}</h3>
               <p className="text-gray-600 mb-2">
-                <span className="text-green-600 font-medium">Author: </span>{" "}
+                <span className="text-gray-500 font-medium">Author: </span>{" "}
                 {book.authors.length > 0
                   ? `${book.authors[0].name} ${
                       book.authors[0].birth_year
