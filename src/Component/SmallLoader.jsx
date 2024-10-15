@@ -6,7 +6,7 @@ const SmallLoader = ({ size }) => {
       style={{ height: `${size}vh` }}
       className="flex justify-center items-center"
     >
-      <ScaleLoader size={100} color="red" />
+      <ScaleLoader size={80} color="red" />
     </div>
   );
 };

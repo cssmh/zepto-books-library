@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import SmallLoader from "./SmallLoader";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [books, setBooks] = useState([]);
@@ -88,39 +89,53 @@ const HomePage = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {currentBooks.map((book) => (
-            <div key={book.id} className="border p-4 rounded-lg shadow-md">
-              <img
-                src={book.formats["image/jpeg"] || "fallback.jpg"}
-                alt={book.title}
-                className="w-full h-40 object-cover mb-2"
-              />
-              <h3 className="font-semibold text-lg">{book.title}</h3>
-              <p className="text-gray-600 mb-2">
-                <span className="text-gray-500 font-medium">Author: </span>{" "}
-                {book.authors.length > 0
-                  ? `${book.authors[0].name} ${
-                      book.authors[0].birth_year
-                        ? `(${book.authors[0].birth_year} - ${
-                            book.authors[0].death_year || "present"
-                          })`
-                        : ""
-                    }`
-                  : "Unknown Author"}
-              </p>
-              <p className="text-gray-500 text-sm mb-2">
-                {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
-              </p>
-              <p className="text-gray-500 text-sm mb-2">
-                <strong>ID:</strong> {book.id}
-              </p>
-              <button
-                onClick={() => toggleWishlist(book)}
-                className={`${
-                  wishlist.includes(book.id) ? "text-red-500" : "text-gray-500"
-                }`}
-              >
-                {wishlist.includes(book.id) ? "❤️" : "🤍"}
-              </button>
+            <div key={book.id} className="flex flex-col border p-4 rounded-lg shadow-md">
+              <div className="flex-grow">
+                <img
+                  src={book.formats["image/jpeg"] || "fallback.jpg"}
+                  alt={book.title}
+                  className="w-full h-40 object-cover mb-2"
+                />
+                <h3 className="font-semibold text-lg">{book.title}</h3>
+                <p className="text-gray-600 mb-2">
+                  <span className="text-gray-500 font-medium">Author: </span>{" "}
+                  {book.authors.length > 0
+                    ? `${book.authors[0].name} ${
+                        book.authors[0].birth_year
+                          ? `(${book.authors[0].birth_year} - ${
+                              book.authors[0].death_year || "present"
+                            })`
+                          : ""
+                      }`
+                    : "Unknown Author"}
+                </p>
+                <p className="text-gray-500 text-sm mb-2">
+                  {book.subjects.length > 0
+                    ? book.subjects[0]
+                    : "Unknown Genre"}
+                </p>
+                <p className="text-gray-500 text-sm mb-2">
+                  <strong>ID:</strong> {book.id}
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <button
+                  onClick={() => toggleWishlist(book)}
+                  className={`${
+                    wishlist.includes(book.id)
+                      ? "text-red-500"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {wishlist.includes(book.id) ? "❤️" : "🤍"}
+                </button>
+                <Link
+                  to={`/book-details/${book.id}`}
+                  className="mt-2 inline-block bg-blue-500 text-white py-1 px-4 rounded"
+                >
+                  Details
+                </Link>
+              </div>
             </div>
           ))}
         </div>
