@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import SmallLoader from "./SmallLoader";
 import { Link } from "react-router-dom";
 import BookHelmet from "./BookHelmet";
+import toast from "react-hot-toast";
 
 const Home = () => {
   const [search, setSearch] = useState("");
@@ -28,8 +29,14 @@ const Home = () => {
       : [...wishlist, bookId];
     setWishlist(updatedWishlist);
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    if (wishlist.includes(bookId)) {
+      toast.success("Removed from wishlist!");
+    } else {
+      toast.success("Added to wishlist!");
+    }
   };
 
+  // Filtering books based on search input and selected genre
   const filteredBooks = books.filter((book) => {
     const matchesTitle = book.title
       .toLowerCase()
@@ -42,10 +49,15 @@ const Home = () => {
     return matchesTitle && matchesGenre;
   });
 
+  const totalBooksByBooks = filteredBooks.length;
   const currentBooks = filteredBooks.slice(
     (currentPage - 1) * booksPerPage,
     currentPage * booksPerPage
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedGenre, books]);
 
   if (isLoading) return <SmallLoader size={83} />;
 
@@ -66,6 +78,10 @@ const Home = () => {
           onChange={(e) => setSelectedGenre(e.target.value)}
         >
           <option value="">All Genres</option>
+          <option value="fiction">Fiction</option>
+          <option value="literature">Literature</option>
+          <option value="poetry">Poetry</option>
+          <option value="politics">Politics</option>
           <option value="science-fiction">Science Fiction & Fantasy</option>
           <option value="gothic fiction">Gothic Fiction</option>
           <option value="horror">Horror</option>
@@ -74,10 +90,10 @@ const Home = () => {
         </select>
       </div>
 
-      {filteredBooks.length === 0 ? (
+      {totalBooksByBooks === 0 ? (
         <p>No books found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
           {currentBooks.map((book) => (
             <div
               key={book.id}
@@ -135,7 +151,7 @@ const Home = () => {
       )}
       <div className="flex justify-center mt-6">
         {Array.from({
-          length: Math.ceil(filteredBooks.length / booksPerPage),
+          length: Math.ceil(totalBooksByBooks / booksPerPage),
         }).map((_, index) => (
           <button
             key={index + 1}

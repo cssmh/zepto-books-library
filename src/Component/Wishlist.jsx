@@ -41,7 +41,7 @@ const Wishlist = () => {
       {wishListedBooks.length === 0 ? (
         <p>Your wishlist is empty.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
           {wishListedBooks.map((book) => (
             <div key={book.id} className="border p-4 rounded-lg shadow-md">
               <img
