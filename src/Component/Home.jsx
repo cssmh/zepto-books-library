@@ -31,13 +31,15 @@ const Home = () => {
   };
 
   const filteredBooks = books.filter((book) => {
-    const inTitle = book.title.toLowerCase().includes(search.toLowerCase());
-    const inGenre =
+    const matchesTitle = book.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesGenre =
       !selectedGenre ||
       book.bookshelves.some((shelf) =>
         shelf.toLowerCase().includes(selectedGenre.toLowerCase())
       );
-    return inTitle && inGenre;
+    return matchesTitle && matchesGenre;
   });
 
   const currentBooks = filteredBooks.slice(
