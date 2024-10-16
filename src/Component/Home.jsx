@@ -19,6 +19,7 @@ const Home = () => {
     queryKey: ["allBooks"],
     queryFn: async () => {
       const res = await axios.get("https://gutendex.com/books");
+      // console.log(res?.data);
       return res?.data?.results;
     },
   });
@@ -30,14 +31,14 @@ const Home = () => {
     setWishlist(updatedWishlist);
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
     if (wishlist.includes(bookId)) {
+      // console.log(wishlist);
       toast.success("Removed from wishlist!");
     } else {
       toast.success("Added to wishlist!");
     }
   };
 
-  // Filtering books based on search input and selected genre
-  const filteredBooks = books.filter((book) => {
+  const filteredBooks = books?.filter((book) => {
     const matchesTitle = book.title
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -108,33 +109,27 @@ const Home = () => {
                   alt={book.title}
                   className="w-full h-48 object-cover mb-2"
                 />
-                <h3 className="font-semibold text-lg">{book.title}</h3>
+                <h3 className="font-semibold text-lg">{book?.title}</h3>
                 <p className="text-gray-600 mb-2">
                   <span className="text-gray-500 font-medium">Author: </span>{" "}
-                  {book.authors.length > 0
-                    ? `${book.authors[0].name} ${
-                        book.authors[0].birth_year
-                          ? `(${book.authors[0].birth_year} - ${
-                              book.authors[0].death_year || "present"
-                            })`
-                          : ""
-                      }`
+                  {book?.authors?.length > 0
+                    ? `${book?.authors[0]?.name} ${`(${
+                        book?.authors[0]?.birth_year
+                      } - ${book.authors[0].death_year || "present"})`}`
                     : "Unknown Author"}
                 </p>
                 <p className="text-gray-500 text-sm mb-2">
-                  {book.subjects.length > 0
-                    ? book.subjects[0]
-                    : "Unknown Genre"}
+                  {book?.subjects[0]}
                 </p>
                 <p className="text-gray-500 text-sm mb-2">
-                  <strong>ID:</strong> {book.id}
+                  <strong>ID:</strong> {book?.id}
                 </p>
               </div>
               <div className="flex justify-between">
                 <button
                   onClick={() => handleToggleWishlist(book.id)}
                   className={`${
-                    wishlist.includes(book.id)
+                    wishlist?.includes(book.id)
                       ? "text-red-500"
                       : "text-gray-500"
                   }`}

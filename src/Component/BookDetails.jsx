@@ -26,33 +26,32 @@ const BookDetails = () => {
           <img
             src={book?.formats?.["image/jpeg"] || "fallback.jpg"}
             alt={book?.title}
-            className="w-1/2 mx-auto md:w-72 object-cover mb-4 sm:mb-0 sm:mr-6"
+            className="w-1/2 mx-auto md:h-96 object-cover mb-4 sm:mb-0 sm:mr-6"
           />
           <div>
-            <h1 className="text-xl md:text-3xl font-semibold mb-2">{book?.title}</h1>
+            <h1 className="text-xl md:text-3xl font-semibold mb-2">
+              {book?.title}
+            </h1>
             <p className="text-xm md:text-lg mb-2">
-              <strong>Author:</strong>{" "}
-              {book?.authors?.[0]?.name || "Unknown Author"} (
-              {book?.authors?.[0]?.birth_year || ""} - {" "}
-              {book?.authors?.[0]?.death_year || "present"})
+              <span className="font-bold">Author:</span>{" "}
+              {book?.authors?.[0]?.name} ({book?.authors?.[0]?.birth_year} -{" "}
+              {book?.authors?.[0]?.death_year})
             </p>
             <p className="text-gray-700 mb-2">
-              <strong>Subjects:</strong>{" "}
-              {book?.subjects?.length
-                ? book.subjects.join(", ")
-                : "No subjects available"}
+              <span className="font-bold">Subjects:</span>{" "}
+              {book?.subjects?.join(", ")}
             </p>
             <p className="text-gray-700 mb-2">
-              <strong>Bookshelves:</strong>{" "}
-              {book?.bookshelves?.length
-                ? book.bookshelves.join(", ")
-                : "No bookshelves available"}
+              <span className="font-bold">Bookshelves:</span>{" "}
+              {book?.bookshelves?.join(", ")}
             </p>
             <p className="text-gray-700 mb-2">
-              <strong>Language:</strong> {book?.languages?.join(", ") || "N/A"}
+              <span className="font-bold">Language:</span>{" "}
+              {book?.languages?.join(", ")}
             </p>
             <p className="text-gray-700 mb-2">
-              <strong>Download Count:</strong> {book?.download_count || 0}
+              <span className="font-bold">Download Count:</span>{" "}
+              {book?.download_count || 0}
             </p>
             <div className="mt-4">
               <h3 className="text-lg font-bold">Available Formats:</h3>
@@ -101,13 +100,14 @@ const BookDetails = () => {
             </div>
           </div>
         </div>
-        <div className="mt-6">
+        <div className="mt-4">
           <h2 className="text-2xl font-bold mb-4">More Information</h2>
           <p>
-            <strong>Media Type:</strong> {book?.media_type || "N/A"}
+            <span className="font-bold">Media Type:</span> {book?.media_type}
           </p>
           <p>
-            <strong>Copyright:</strong> {book?.copyright ? "Yes" : "No"}
+            <span className="font-bold">Copyright:</span>{" "}
+            {book?.copyright ? "Yes" : "No"}
           </p>
         </div>
       </div>

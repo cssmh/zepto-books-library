@@ -10,6 +10,7 @@ const Wishlist = () => {
   const [wishlist, setWishlist] = useState(() => {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
+  // console.log(wishlist);
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["allBooks"],
@@ -50,19 +51,13 @@ const Wishlist = () => {
               className="border p-4 rounded-lg shadow-md"
             >
               <img
-                src={book.formats["image/jpeg"] || "fallback.jpg"}
+                src={book?.formats["image/jpeg"]}
                 alt={book.title}
                 className="w-full h-40 object-cover mb-4"
               />
               <h3 className="font-bold text-lg mb-2">{book.title}</h3>
-              <p className="text-gray-600 mb-2">
-                {book.authors.length > 0
-                  ? book.authors[0].name
-                  : "Unknown Author"}
-              </p>
-              <p className="text-gray-500 text-sm mb-2">
-                {book.subjects.length > 0 ? book.subjects[0] : "Unknown Genre"}
-              </p>
+              <p className="text-gray-600 mb-2">{book?.authors[0]?.name}</p>
+              <p className="text-gray-500 text-sm mb-2">{book?.subjects[0]}</p>
               <div className="flex justify-between">
                 <button
                   onClick={() => handleRemoveFromWishlist(book.id)}

@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const location = useLocation();
