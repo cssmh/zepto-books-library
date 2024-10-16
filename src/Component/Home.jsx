@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import SmallLoader from "./SmallLoader";
 import { Link } from "react-router-dom";
 import BookHelmet from "./BookHelmet";
 import toast from "react-hot-toast";
+import useBooks from "./useBooks";
 
 const Home = () => {
   const [search, setSearch] = useState("");
@@ -14,15 +13,8 @@ const Home = () => {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 9;
-
-  const { data: books = [], isLoading } = useQuery({
-    queryKey: ["allBooks"],
-    queryFn: async () => {
-      const res = await axios.get("https://gutendex.com/books");
-      // console.log(res?.data);
-      return res?.data?.results;
-    },
-  });
+  const { books, isLoading } = useBooks();
+  console.log(books);
 
   const handleToggleWishlist = (bookId) => {
     const updatedWishlist = wishlist.includes(bookId)
@@ -105,7 +97,7 @@ const Home = () => {
             >
               <div className="flex-grow">
                 <img
-                  src={book.formats["image/jpeg"] || "fallback.jpg"}
+                  src={book?.formats["image/jpeg"]}
                   alt={book.title}
                   className="w-full h-48 object-cover mb-2"
                 />

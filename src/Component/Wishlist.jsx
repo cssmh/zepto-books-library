@@ -1,24 +1,16 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
 import SmallLoader from "./SmallLoader";
 import { Link } from "react-router-dom";
 import BookHelmet from "./BookHelmet";
+import useBooks from "./useBooks";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState(() => {
     return JSON.parse(localStorage.getItem("wishlist")) || [];
   });
-  // console.log(wishlist);
-
-  const { data: books = [], isLoading } = useQuery({
-    queryKey: ["allBooks"],
-    queryFn: async () => {
-      const res = await axios.get("https://gutendex.com/books");
-      return res?.data?.results;
-    },
-  });
+  const { books, isLoading } = useBooks();
+  // console.log(books);
 
   const handleRemoveFromWishlist = (bookId) => {
     try {
@@ -31,6 +23,16 @@ const Wishlist = () => {
     }
   };
 
+  const handleClearWishlist = () => {
+    try {
+      setWishlist([]);
+      localStorage.removeItem("wishlist");
+      toast.success("Wishlist cleared!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const wishListedBooks = books?.filter((book) => wishlist.includes(book.id));
 
   if (isLoading) return <SmallLoader size={82} />;
@@ -38,7 +40,17 @@ const Wishlist = () => {
   return (
     <div className="container mx-auto p-4">
       <BookHelmet title="Wishlist" />
-      <h1 className="text-xl md:text-2xl font-semibold mb-4">Your Wishlist</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl md:text-2xl font-semibold">Your Wishlist</h1>
+        {wishListedBooks?.length > 0 && (
+          <button
+            onClick={handleClearWishlist}
+            className="bg-red-500 text-white py-1 px-4 rounded"
+          >
+            Remove All Wishlist
+          </button>
+        )}
+      </div>
       {wishListedBooks?.length === 0 ? (
         <p>Your wishlist is empty.</p>
       ) : (
