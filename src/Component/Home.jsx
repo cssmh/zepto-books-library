@@ -36,8 +36,8 @@ const Home = () => {
       .includes(search.toLowerCase());
     const matchesGenre =
       !selectedGenre ||
-      book.bookshelves.some((shelf) =>
-        shelf.toLowerCase().includes(selectedGenre.toLowerCase())
+      book.bookshelves.some((genre) =>
+        genre.toLowerCase().includes(selectedGenre.toLowerCase())
       );
     return matchesTitle && matchesGenre;
   });
@@ -99,22 +99,28 @@ const Home = () => {
                 <img
                   src={book?.formats["image/jpeg"]}
                   alt={book.title}
-                  className="w-full h-48 object-cover mb-2"
+                  className="w-full h-60 md:h-48 object-cover mb-2"
                 />
                 <h3 className="font-semibold text-lg">{book?.title}</h3>
                 <p className="text-gray-600 mb-2">
-                  <span className="text-gray-500 font-medium">Author: </span>{" "}
+                  <span className="text-gray-500 font-semibold">Author: </span>{" "}
                   {book?.authors?.length > 0
                     ? `${book?.authors[0]?.name} ${`(${
                         book?.authors[0]?.birth_year
                       } - ${book.authors[0].death_year || "present"})`}`
                     : "Unknown Author"}
                 </p>
+                <div className="text-gray-500 text-sm mb-2">
+                  <span className="font-bold">Genres:</span>{" "}
+                  {book?.bookshelves?.map((genre, index) => (
+                    <span key={index}>
+                      {genre}
+                      {index < book.bookshelves.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </div>
                 <p className="text-gray-500 text-sm mb-2">
-                  {book?.subjects[0]}
-                </p>
-                <p className="text-gray-500 text-sm mb-2">
-                  <strong>ID:</strong> {book?.id}
+                  <span className="font-bold">ID:</span> {book?.id}
                 </p>
               </div>
               <div className="flex justify-between">

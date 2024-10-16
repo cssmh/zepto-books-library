@@ -65,7 +65,7 @@ const Wishlist = () => {
               <img
                 src={book?.formats["image/jpeg"]}
                 alt={book.title}
-                className="w-full h-40 object-cover mb-4"
+                className="w-full h-60 md:h-48 object-cover mb-4"
               />
               <h3 className="font-bold text-lg mb-2">{book.title}</h3>
               <p className="text-gray-600 mb-2">{book?.authors[0]?.name}</p>

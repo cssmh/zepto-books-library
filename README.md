@@ -1,4 +1,4 @@
-# Zepto Books
+# Zepto Books Library
 
 This project is a book library application built using React and Vite. It fetches data from the public [Gutendex API](https://gutendex.com/books) and allows users to explore books, filter them by genres, and manage a wishlist. The application is designed to be responsive and user-friendly.
 

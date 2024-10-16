@@ -14,7 +14,7 @@ const BookDetails = () => {
       return res?.data;
     },
   });
-  console.log(book);
+  // console.log(book);
 
   if (isLoading) return <SmallLoader size={83} />;
 
